@@ -1,2 +1,2 @@
 # SQL-
-takie fajne te
+Taki śmieszny program który robi za nas
