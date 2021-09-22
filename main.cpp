@@ -1,30 +1,68 @@
 //Copyright of "Dziewiczy Wąsik Studio" 2021-2021
 #include<iostream>
-
+#include<cstdlib>
+#include<time.h>
+#include<fstream>
 using namespace std;
 
-string command;
-//command used at the moment
+int number[1];
+int age[2];
+int howManyNames;
+int howManyVar;
+string data[3]; //0-Nazwa bazy danych, 1-Nazwa tabeli, 2-nameValue, 3-surnameValue
+string name[1000];
+string surname[1000];
+string linia;
+string writeAge;
+const int tableSize = 50;
+bool databaseCreated = false;
 
-string databasename;
-string table[1000][1000];
-// table[tablenumber][columnnumber];
+const string filename = "Output.txt";
+ofstream plik1(filename);
+
+//Konstruktory
+void ui();
+
+class Table
+{
+public:
+    string name;
+    string dataNames[tableSize];
+    string dataTypes[tableSize];
+    string data[tableSize];
+};
 
 void Create_Database()
 {
-    cin>>databasename;
-    cout<<"CREATE DATABASE"<<databasename<<";"<<endl;
+    cout << "Jak się nazywa baza danych którą chcesz stworzyć?\n";
+    cin >> data[0];
+    plik1 << "drop database " << data[0] << ";\ncreate database " << data[0] << ";\n";
 }
 
 void Drop_Database()
 {
-    cin>>databasename;
-    cout<<"DROP DATABASE"<<databasename<<";"<<endl;
+    plik1 << "drop database\n";
 }
 
 void Create_Table()
 {
-    //Create Table.
+    cout << "Tak wogóle tego jeszcze nie dokończyłem lmao\n";
+    Table table;
+    cout << "Nazwa tabeli\n";
+    cin >> table.name;
+    cout << "Ile kolumn\n";
+    cin >> howManyVar;
+    cout << "Typy danych\n";
+    for(int i = 0; i < howManyVar; i++)
+    {
+        cin >> table.dataTypes[i];
+    }
+    cout << "Nazwy kolumn\n";
+    for(int i = 0; i < howManyVar; i++)
+    {
+        cin >> table.dataNames[i];
+    }
+    ui();
 }
 
 void Drop_Table()
@@ -60,50 +98,83 @@ void Get_File()
     plik.close(); 
 }
 
+void insertNames(){
+    cout << "Ile osob chcesz wylosowac?\n";
+    cin >> howManyNames;
+    cout << "Jak sie nazywa tabela do ktorej wklejasz te dane?\n";
+    cin >> data[1];
+    cout << "Jak sie nazywa kolumna w ktorej przechowujesz imie?\n";
+    cin >> data[2];
+    cout << "Jak sie nazywa tabela w ktorej przechowujesz nazwisko?\n";
+    cin >> data[3];
+    cout << "Chcesz wylosować wiek? (y/n)\n";
+    cin >> writeAge;
+    cRandom();
+    cout << "Wygenerowano liste z zapytaniami SQL!\n";
+    ui();
+}
 
-
-void Question()
+void assignment()
 {
-    cin>>command;
+    int nr_lini=1;
 
-    if(command=="database")
+    fstream plik;
+    plik.open("names.txt", ios::in);
+    if(plik.good()==false)
     {
-        Create_Database();
+    cout<<"Nie mozna otworzyc pliku!";
+    exit(0);
     }
-    else if(command=="drop database")
+    while (getline(plik, linia))
     {
-        Drop_Database();
+        name[nr_lini]=linia;
+        nr_lini++;
     }
-    else if(command=="table")
+    plik.close();
+
+    nr_lini=1;
+
+    plik.open("surnames.txt", ios::in);
+    if(plik.good()==false)
     {
-        Create_Table();
+    cout<<"Nie mozna otworzyc pliku!";
+    exit(0);
     }
-    else if(command=="drop table")
+    while (getline(plik, linia))
     {
-        Drop_Table();
+        surname[nr_lini]=linia;
+        nr_lini++;
     }
-    else if(command=="insert")
+    plik.close();
+}
+
+void ui()
+{
+    assignment();
+    if(databaseCreated == false)
     {
-        Insert_Into();
+        createDatabase();
     }
-    else if(command=="conect")
+    int choice;
+    cout << "Created by Dziewiczy Wąsik Studio 2021\n";
+    cout << "Co chcesz zrobić (wprowadzaj liczby)?\n1.Stwórz tabelę\n2.Wylosuj osoby do tabeli\n";
+    cin >> choice;
+    switch(choice)
     {
-        Conect();
-    }
-    else if(command=="get file")
-    {
-        Get_File();
-    }
-    else
-    {
-        cout<<"Invalid command!";
-        exit(0);
+        case 1:
+            createTable();
+            break;
+        case 2:
+            insertNames();
+            break;
+        default:
+            cout << "Błędne dane!\n";
     }
 }
 
 int main()
 {
-    Question();
+    ui();
 
     return 0;
 }
